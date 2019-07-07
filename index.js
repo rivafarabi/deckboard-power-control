@@ -1,4 +1,10 @@
-const { Extension, INPUT_METHOD, PLATFORMS } = require('deckboard-kit');
+const { dialog } = require('electron');
+const {
+	Extension,
+	log,
+	INPUT_METHOD,
+	PLATFORMS
+} = require('deckboard-kit');
 const { shutdown } = require('wintools');
 
 class PowerControlExtension extends Extension {
@@ -27,22 +33,58 @@ class PowerControlExtension extends Extension {
 								value: 'restart'
 							}
 						]
+					},
+					{
+						label: 'With Confirmation',
+						ref: 'confirmation',
+						type: INPUT_METHOD.INPUT_CHECKBOX,
+						default: true
 					}
 				]
 			}
 		];
 	}
 
-	execute = (action, { powerAction }) => {
-		extensionLog('info', `${action} ${powerAction}`);
+	execute = (action, { powerAction, confirmation = true }) => {
+		log.info(`${action} ${powerAction}`);
 		switch (action) {
 			case 'power-option': {
 				switch (powerAction) {
 					case 'shutdown':
-						shutdown.poweroff();
+						if (confirmation)
+							dialog.showMessageBox(
+								null,
+								{
+									type: 'question',
+									buttons: ['Cancel', 'Yes'],
+									defaultId: 0,
+									title: 'Shutdown',
+									message:
+										'Do you want to shutdown the computer?'
+								},
+								response => {
+									if (response === 1) shutdown.poweroff();
+								}
+							);
+						else shutdown.poweroff();
 						break;
 					case 'restart':
-						shutdown.restart();
+						if (confirmation)
+							dialog.showMessageBox(
+								null,
+								{
+									type: 'question',
+									buttons: ['Cancel', 'Yes'],
+									defaultId: 0,
+									title: 'Shutdown',
+									message:
+										'Do you want to restart the computer?'
+								},
+								response => {
+									if (response === 1) shutdown.restart();
+								}
+							);
+						else shutdown.restart();
 						break;
 					default:
 						break;
