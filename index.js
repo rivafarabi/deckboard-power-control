@@ -1,10 +1,5 @@
 const { dialog } = require('electron');
-const {
-	Extension,
-	log,
-	INPUT_METHOD,
-	PLATFORMS
-} = require('deckboard-kit');
+const { Extension, log, INPUT_METHOD, PLATFORMS } = require('deckboard-kit');
 const { shutdown } = require('wintools');
 
 class PowerControlExtension extends Extension {
@@ -45,7 +40,7 @@ class PowerControlExtension extends Extension {
 		];
 	}
 
-	execute = (action, { powerAction, confirmation = true }) => {
+	execute(action, { powerAction, confirmation = true }) {
 		log.info(`${action} ${powerAction}`);
 		switch (action) {
 			case 'power-option': {
@@ -93,7 +88,7 @@ class PowerControlExtension extends Extension {
 			default:
 				break;
 		}
-	};
+	}
 }
 
 module.exports = new PowerControlExtension();
